@@ -41,7 +41,8 @@ class Jornada (models.Model):
     id_jornada = models.AutoField(primary_key=True)
     numero = models.IntegerField(unique=True)
     partidos = models.ForeignKey(Partido, on_delete=models.CASCADE)
-    fecha = models.DateField()
+    fecha_inicio = models.DateField()
+    fecha_fin = models.DateField()
 
     def __str__(self):
         return self.nombre
