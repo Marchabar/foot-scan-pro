@@ -1,9 +1,11 @@
 from django.db import models
 
+
 class Equipo (models.Model):
     id_equipo = models.AutoField(primary_key=True)
     nombre = models.CharField(max_length=100)
     logo = models.URLField(null=True, blank=True)
+    url = models.URLField(null=True, blank=True)
 
     def __str__(self):
         return self.nombre
@@ -16,6 +18,10 @@ class Jugador (models.Model):
     nombre = models.CharField(max_length=100)
     equipo = models.ForeignKey(Equipo, on_delete=models.CASCADE)
     edad = models.IntegerField()
+    dorsal = models.IntegerField()
+    posicion = models.CharField(max_length=15, choices=[('Portero', 'Portero'), ('Defensa', 'Defensa'), ('Centrocampista', 'Centrocampista'), ('Delantero', 'Delantero')])
+    nacionalidad = models.URLField(null=True, blank=True)
+    foto = models.URLField(null=True, blank=True)
 
     def __str__(self):
         return self.nombre
