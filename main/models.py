@@ -3,7 +3,7 @@ from django.db import models
 class Equipo (models.Model):
     id_equipo = models.AutoField(primary_key=True)
     nombre = models.CharField(max_length=100)
-    logo = models.ImageField(upload_to='logos', null=True, blank=True)
+    logo = models.URLField(null=True, blank=True)
 
     def __str__(self):
         return self.nombre
@@ -40,7 +40,7 @@ class Partido (models.Model):
 class Jornada (models.Model):
     id_jornada = models.AutoField(primary_key=True)
     numero = models.IntegerField(unique=True)
-    partidos = models.OneToManyField(Partido, on_delete=models.CASCADE)
+    partidos = models.ForeignKey(Partido, on_delete=models.CASCADE)
     fecha = models.DateField()
 
     def __str__(self):
