@@ -19,14 +19,13 @@ def extraer_jugadores(nombre_equipo):
     url = 'https://www.resultados-futbol.com/plantilla/' + nombre_equipo.replace(' ', '-')
     f = urllib.request.urlopen(url)
     s = BeautifulSoup(f, 'lxml')
-    posiciones = s.find_all('tr', class_='first_child').text.strip()
     jugadores = s.find_all('tr', itemprop='employee')
     for jugador in jugadores:
         nombre = jugador.find('th', class_='sdata_player_name').find('span').text.strip()
         equipo = nombre_equipo
         edad = jugador.find('td', class_='birthdate').text.strip()
         dorsal = jugador.find('td', class_='num').text.strip()
-        posicion = null
+        posicion = jugador.find_previous('th', class_='axis').text.strip() #this may be wrong
         nacionalidad = jugador.find('td', class_='ori').find('img')['src']
         foto = jugador.find('td', class_='sdata_player_img').find('img')['src']
         lista_jugadores.append([nombre, equipo, edad, dorsal, posicion, nacionalidad, foto])
