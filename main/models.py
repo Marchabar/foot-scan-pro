@@ -36,6 +36,7 @@ class Partido (models.Model):
     goles_local = models.IntegerField()
     goles_visitante = models.IntegerField()
     fecha = models.DateField()
+    jornada = models.ForeignKey('Jornada', on_delete=models.CASCADE)
 
     def __str__(self):
         return str(self.equipo_local) + ' vs ' + str(self.equipo_visitante)
@@ -46,7 +47,6 @@ class Partido (models.Model):
 class Jornada (models.Model):
     id_jornada = models.AutoField(primary_key=True)
     numero = models.IntegerField(unique=True)
-    partidos = models.ForeignKey(Partido, on_delete=models.CASCADE)
     fecha_inicio = models.DateField()
     fecha_fin = models.DateField()
 

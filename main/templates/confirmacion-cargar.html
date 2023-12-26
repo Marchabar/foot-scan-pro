@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Confirmación{% endblock %}
+
+{% block extrahead %}
+{% endblock %}
+
+
+{% block content %}
+<div class="d-flex justify-content-center mt-5  ">
+    <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#confirmationModal">
+        Cargar Base de Datos
+    </button>
+</div>
+
+<form id="cargarForm" action="{% url 'cargar-db' %}" method="post">
+    {% csrf_token %}
+</form>
+
+<div class="modal fade" id="confirmationModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Confirmación</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>¿Está seguro de que quiere popular la base de datos?. Este proceso llevará unos minutos</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-danger" data-bs-dismiss="modal" onclick="document.getElementById('cargarForm').submit();">Aceptar</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
