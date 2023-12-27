@@ -10,25 +10,27 @@
     {% bootstrap_javascript %}
 </head>
 
-<body class="d-flex flex-column vh-100">
+<body class="d-flex flex-column min-vh-100">
 
-    <div class="container flex-grow-1">
-      <ul class="nav bg-info">
-        <li class="nav-item">
-          <a class="nav-link link-light" href="/">HOME</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link link-light" href="/cargar-db">Cargar Base de Datos</a>
-        </li>
-      </ul>
-    
+    <div class="container-fluid p-0">
+        <ul class="nav py-2" style="background-color: #E7D8C9;">
+            <li class="nav-item">
+                <a class="nav-link" style="color: #000000;" href="/"><h4>Inicio</h4></a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" style="color: #000000;" href="/cargar-db"><h4>Cargar datos</h4></a>
+            </li>
+        </ul>
+    </div>
+
+    <div class="container-fluid flex-grow-1 d-flex align-items-center justify-content-center">
       {% block content %}
       {% endblock %}
     </div>
 
-
-    <footer class="bg-light text-center p-3 mt-5">
+    <footer class="text-center py-3" style="background-color: #E7D8C9; color: #000000;">
         <h4>Project done by Marco Chasco Barry</h4>
     </footer>
 </body>
+
 </html>
