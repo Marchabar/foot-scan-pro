@@ -115,17 +115,19 @@ def extraer_jornadas():
     f = urllib.request.urlopen(urlPrimera)
     s = BeautifulSoup(f, 'lxml')
     lista_link_jornadas = s.find_all('div', class_='boxhome boxhome-2col')
+    numero_jornada = 1
     for link_jornadas in lista_link_jornadas:
         url_jornada = 'https://www.resultados-futbol.com/' + link_jornadas.a['href']
         f = urllib.request.urlopen(url_jornada)
         s = BeautifulSoup(f, 'lxml')
-        numero_jornada = s.find('div', class_='j_cur').find('a').text.strip().split(' ')[1]
         fechas_even = s.find_all('tr', class_='vevent')
         fecha_impar = s.find_all('tr', class_='vevent impar')
         fecha_inicio = convertir_fecha(fechas_even[0].find('td', class_='fecha').text.strip())
         fecha_fin = convertir_fecha(fecha_impar[-1].find('td', class_='fecha').text.strip())
         lista_partidos = extraer_partidos(url_jornada)
         lista_jornadas.append([numero_jornada, lista_partidos, fecha_inicio, fecha_fin])
+        numero_jornada += 1
+        
     return lista_jornadas
 
 def populate():

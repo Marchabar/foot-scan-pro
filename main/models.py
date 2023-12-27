@@ -31,7 +31,7 @@ class Jugador (models.Model):
 
 class Jornada (models.Model):
     id_jornada = models.AutoField(primary_key=True)
-    numero = models.IntegerField()
+    numero = models.IntegerField(unique=True)
     fecha_inicio = models.DateField()
     fecha_fin = models.DateField()
 
