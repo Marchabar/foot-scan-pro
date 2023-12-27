@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+{% block title %}Jornadas{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 justify-content-center">
+        {% for jornada in jornadas %}
+        <div class="col mb-2 mt-2">
+            <div class="card shadow-sm" style="width: 400px;"> 
+                <div class="card-body text-center">
+                    <h5 class="card-title">Jornada {{ jornada.numero }}</h5>
+                    <p class="card-text">Fecha Inicio: {{ jornada.fecha_inicio }}</p>
+                    <p class="card-text">Fecha Fin: {{ jornada.fecha_fin }}</p>
+                    {% if jornada.id_jornada %}
+                        <a href="partidos/{{ jornada.id_jornada }}" class="btn btn-primary">Ver Partidos</a>
+                    {% else %}
+                        <!-- Handle the case where jornada.id is not available -->
+                        <span class="text-danger">Jornada ID not available</span>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

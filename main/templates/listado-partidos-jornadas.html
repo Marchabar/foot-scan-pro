@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+{% block title %}Partidos de Jornada {{ jornada.numero }}{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 justify-content-center">
+        {% for partido in partidos %}
+        <div class="col mb-2 mt-2">
+            <div class="card shadow-sm" style="width: 400px;"> 
+                <div class="card-body text-center">
+                    <h5 class="card-title">{{ partido.equipo_local.nombre }} vs {{ partido.equipo_visitante.nombre }}</h5>
+                    <p class="card-text">{{ partido.goles_local }} - {{ partido.goles_visitante }}</p>
+                    <p class="card-text">Fecha del Partido: {{ partido.fecha }}</p>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}
