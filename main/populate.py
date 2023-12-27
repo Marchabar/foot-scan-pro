@@ -52,6 +52,7 @@ def extraer_equipos(partido):
         url_local = partido.find('td', class_='equipo1').find_all('a')[1]['href']
         equipos_extracted[nombre_local] = [nombre_local, logo_local, url_local]
         extraer_jugadores(nombre_local)
+        
     if nombre_visitante not in equipos_extracted:
         logo_visitante = partido.find('td', class_='equipo2').find('img')['src']
         url_visitante = partido.find('td', class_='equipo2').find_all('a')[1]['href']
@@ -91,12 +92,12 @@ def extraer_jornadas():
         url_jornada = 'https://www.resultados-futbol.com/' + link_jornadas.a['href']
         f = urllib.request.urlopen(url_jornada)
         s = BeautifulSoup(f, 'lxml')
-        numero_jornada = s.find('div', class_='j_cur').a.text.strip().split(' ')[1]
-        lista_partidos = extraer_partidos(url_jornada)
+        numero_jornada = s.find('div', class_='j_cur').find('a').text.strip().split(' ')[1]
         fechas_even = s.find_all('tr', class_='vevent')
         fecha_impar = s.find_all('tr', class_='vevent impar')
         fecha_inicio = convertir_fecha(fechas_even[0].find('td', class_='fecha').text.strip())
         fecha_fin = convertir_fecha(fecha_impar[-1].find('td', class_='fecha').text.strip())
+        lista_partidos = extraer_partidos(url_jornada)
         lista_jornadas.append([numero_jornada, lista_partidos, fecha_inicio, fecha_fin])
     return lista_jornadas
 
@@ -112,29 +113,36 @@ def populate():
     Jornada.objects.all().delete()
 
     lista_jornadas = extraer_jornadas()
-    for jornada_data in lista_jornadas:
-        num_jornadas += 1
-        jornada = Jornada.objects.create(numero=jornada_data[0], fecha_inicio=jornada_data[2], fecha_fin=jornada_data[3])
-        for partido_data in jornada_data[1]:
-            num_partidos += 1
-            equipo_local = Equipo.objects.get_or_create(nombre=partido_data[0])[0]
-            equipo_visitante = Equipo.objects.get_or_create(nombre=partido_data[1])[0]
-            partido = Partido.objects.create(equipo_local=equipo_local, equipo_visitante=equipo_visitante, goles_local=partido_data[2], goles_visitante=partido_data[3], fecha=partido_data[4], jornada=jornada)
-            equipo_local.save()
-            equipo_visitante.save()
-            partido.save()
-    
+
+
     equipos = equipos_extracted.values()
     for equipo in equipos:
         num_equipos += 1
         equipo = Equipo.objects.create(nombre=equipo[0], logo=equipo[1], url=equipo[2])
         equipo.save()
-        jugadores = jugadores_por_equipo[equipo.nombre]
+        equipo_nombre = unidecode(equipo.nombre.replace(' ', '-'))
+        jugadores = jugadores_por_equipo[equipo_nombre]
         for jugador in jugadores:
             num_jugadores += 1
             jugador = Jugador.objects.create(nombre=jugador[0], equipo=equipo, edad=jugador[2], dorsal=jugador[3], posicion=jugador[4], nacionalidad=jugador[5], foto=jugador[6])
             jugador.save()
         equipo.save()
+
+    for jornada_data in lista_jornadas:
+        num_jornadas += 1
+        jornada = Jornada.objects.create(numero=jornada_data[0], fecha_inicio=jornada_data[2], fecha_fin=jornada_data[3])
+        for partido_data in jornada_data[1]:
+            print(partido_data)
+            num_partidos += 1
+            equipo_local = Equipo.objects.get(nombre=partido_data[0])
+            equipo_visitante = Equipo.objects.get(nombre=partido_data[1])
+            try: 
+                partido = Partido.objects.create(equipo_local=equipo_local, equipo_visitante=equipo_visitante, goles_local=partido_data[2], goles_visitante=partido_data[3], fecha=partido_data[4], jornada=jornada)
+            except Exception as e:
+                print(f"Error creating Partido: {e}")
+        
+    
+    
 
     return ((num_jugadores, num_equipos, num_partidos, num_jornadas))
 

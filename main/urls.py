@@ -5,7 +5,6 @@ from main import populate
 
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
     path('', views.index),
     path('cargar-db/', populate.cargar, name='cargar-db'),
     
