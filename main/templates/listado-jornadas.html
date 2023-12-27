@@ -11,12 +11,9 @@
                     <h5 class="card-title">Jornada {{ jornada.numero }}</h5>
                     <p class="card-text">Fecha Inicio: {{ jornada.fecha_inicio }}</p>
                     <p class="card-text">Fecha Fin: {{ jornada.fecha_fin }}</p>
-                    {% if jornada.id_jornada %}
-                        <a href="partidos/{{ jornada.id_jornada }}" class="btn btn-primary">Ver Partidos</a>
-                    {% else %}
-                        <!-- Handle the case where jornada.id is not available -->
-                        <span class="text-danger">Jornada ID not available</span>
-                    {% endif %}
+                    <a href="partidos/{{ jornada.id_jornada }}" class="btn" style="background-color: #E7D8C9; color: #000000; text-decoration: none;" onmouseover="this.style.backgroundColor='#8B4513'; this.style.color='#E7D8C9';" onmouseout="this.style.backgroundColor='#E7D8C9'; this.style.color='#000000';">
+                        Ver Partidos
+                    </a>                    
                 </div>
             </div>
         </div>
