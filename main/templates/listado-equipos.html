@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+{% block title %}Equipos{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 justify-content-center">
+        {% for equipo in equipos %}
+        <div class="col mb-2 mt-2">
+            <div class="card shadow-sm" style="width: 400px;"> 
+                <img src="{{ equipo.logo }}" class="card-img-top mt-3" alt="{{ equipo.nombre }}" style="max-height: 100px; object-fit: contain;">
+                <div class="card-body text-center">
+                    <h5 class="card-title">{{ equipo.nombre }}</h5>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+        <div class="col mb-2 mt-2 invisible-card"></div>
+        <div class="col mb-2 mt-2 invisible-card"></div>
+    </div>
+</div>
+{% endblock %}
