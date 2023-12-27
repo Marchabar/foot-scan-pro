@@ -58,6 +58,7 @@ def extraer_equipos(partido):
         url_visitante = partido.find('td', class_='equipo2').find_all('a')[1]['href']
         equipos_extracted[nombre_visitante] = [nombre_visitante, logo_visitante, url_visitante]
         extraer_jugadores(nombre_visitante)
+    return equipos_extracted
 
 def extraer_partidos(url_jornada):
     lista_partidos = []
@@ -66,21 +67,47 @@ def extraer_partidos(url_jornada):
     partidos_even = s.find_all('tr', class_='vevent')
     partidos_impar = s.find_all('tr', class_='vevent impar')
     for partido in partidos_even:
-        equipos = extraer_equipos(partido)
-        if equipos is not None:
-            equipo_local = equipos[0][0]
-            equipo_visitante = equipos[1][0]
-            goles_local = partido.find('a', class_='url').find('span', class_='clase').text.strip().split('-')[0]
-            goles_visitante = partido.find('a', class_='url').find('span', class_='clase').text.strip().split('-')[1]
-            fecha = convertir_fecha(partido.find('td', class_='fecha').text.strip())
-            lista_partidos.append([equipo_local, equipo_visitante, goles_local, goles_visitante, fecha])
+        extraer_equipos(partido)
+        equipo_local = partido.find('td', class_='equipo1').find_all('a')[1].text.strip()
+        equipo_visitante = partido.find('td', class_='equipo2').find_all('a')[1].text.strip()
+        equipo_local = unidecode(equipo_local.replace(' ', '-'))
+        equipo_visitante = unidecode(equipo_visitante.replace(' ', '-'))
+        result_element = partido.find('span', class_='clase')
+        if result_element is not None:
+            result_or_time = result_element.text.strip()
+        else:
+            time_element = partido.find('div', class_='chk_hour')
+            if time_element is not None:
+                result_or_time = time_element.text.strip()
+            else:
+                result_or_time = 'x'  
+        if '-' in result_or_time:
+            goles_local, goles_visitante = result_or_time.split('-')
+        else:
+            goles_local = goles_visitante = 'x'
+        fecha = convertir_fecha(partido.find('td', class_='fecha').text.strip())
+        lista_partidos.append([equipo_local, equipo_visitante, goles_local, goles_visitante, fecha])
     for partido in partidos_impar:
-        equipos = extraer_equipos(partido)
-        if equipos is not None:
-            goles_local = partido.find('td', class_='rstd').a.text.strip()
-            goles_visitante = partido.find('td', class_='rstd').a.text.strip()
-            fecha = partido.find('td', class_='fecha').text.strip()
-            lista_partidos.append([equipo_local, equipo_visitante, goles_local, goles_visitante, fecha])
+        extraer_equipos(partido)
+        equipo_local = partido.find('td', class_='equipo1').find_all('a')[1].text.strip()
+        equipo_visitante = partido.find('td', class_='equipo2').find_all('a')[1].text.strip()
+        equipo_local = unidecode(equipo_local.replace(' ', '-'))
+        equipo_visitante = unidecode(equipo_visitante.replace(' ', '-'))
+        result_element = partido.find('span', class_='clase')
+        if result_element is not None:
+            result_or_time = result_element.text.strip()
+        else:
+            time_element = partido.find('div', class_='chk_hour')
+            if time_element is not None:
+                result_or_time = time_element.text.strip()
+            else:
+                result_or_time = 'x'  
+        if '-' in result_or_time:
+            goles_local, goles_visitante = result_or_time.split('-')
+        else:
+            goles_local = goles_visitante = 'x'
+        fecha = convertir_fecha(partido.find('td', class_='fecha').text.strip())
+        lista_partidos.append([equipo_local, equipo_visitante, goles_local, goles_visitante, fecha])
     return lista_partidos
 
 def extraer_jornadas():
@@ -118,28 +145,22 @@ def populate():
     equipos = equipos_extracted.values()
     for equipo in equipos:
         num_equipos += 1
-        equipo = Equipo.objects.create(nombre=equipo[0], logo=equipo[1], url=equipo[2])
-        equipo.save()
-        equipo_nombre = unidecode(equipo.nombre.replace(' ', '-'))
+        equipo_nombre = unidecode(equipo[0].replace(' ', '-'))
+        equipo = Equipo.objects.create(nombre=equipo_nombre, logo=equipo[1], url=equipo[2])
         jugadores = jugadores_por_equipo[equipo_nombre]
         for jugador in jugadores:
             num_jugadores += 1
             jugador = Jugador.objects.create(nombre=jugador[0], equipo=equipo, edad=jugador[2], dorsal=jugador[3], posicion=jugador[4], nacionalidad=jugador[5], foto=jugador[6])
-            jugador.save()
-        equipo.save()
 
     for jornada_data in lista_jornadas:
         num_jornadas += 1
         jornada = Jornada.objects.create(numero=jornada_data[0], fecha_inicio=jornada_data[2], fecha_fin=jornada_data[3])
         for partido_data in jornada_data[1]:
-            print(partido_data)
             num_partidos += 1
-            equipo_local = Equipo.objects.get(nombre=partido_data[0])
-            equipo_visitante = Equipo.objects.get(nombre=partido_data[1])
-            try: 
-                partido = Partido.objects.create(equipo_local=equipo_local, equipo_visitante=equipo_visitante, goles_local=partido_data[2], goles_visitante=partido_data[3], fecha=partido_data[4], jornada=jornada)
-            except Exception as e:
-                print(f"Error creating Partido: {e}")
+            equipo_local, created = Equipo.objects.get_or_create(nombre=partido_data[0])
+            equipo_visitante, created = Equipo.objects.get_or_create(nombre=partido_data[1])
+            partido = Partido.objects.create(equipo_local=equipo_local, equipo_visitante=equipo_visitante, goles_local=partido_data[2], goles_visitante=partido_data[3], fecha=partido_data[4], jornada=jornada)
+          
         
     
     

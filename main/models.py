@@ -36,7 +36,7 @@ class Jornada (models.Model):
     fecha_fin = models.DateField()
 
     def __str__(self):
-        return self.nombre
+        return self.numero
 
     class Meta:
         ordering = ['numero']
@@ -46,8 +46,8 @@ class Partido (models.Model):
     jornada = models.ForeignKey(Jornada, on_delete=models.CASCADE, related_name='jornada')
     equipo_local = models.ForeignKey(Equipo, on_delete=models.CASCADE, related_name='equipo_local')
     equipo_visitante = models.ForeignKey(Equipo, on_delete=models.CASCADE, related_name='equipo_visitante')
-    goles_local = models.IntegerField()
-    goles_visitante = models.IntegerField()
+    goles_local = models.TextField(blank=True)
+    goles_visitante = models.TextField(blank=True)
     fecha = models.DateField()
 
     def __str__(self):
