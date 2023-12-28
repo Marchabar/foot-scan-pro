@@ -20,6 +20,66 @@ def convertir_fecha(fecha):
     date = datetime.datetime.strptime(f"{day} {month} {year}", "%d %m %y")
     return date.strftime("%Y-%m-%d")
 
+country_codes =  {
+    'es': 'España',
+    'mk': 'Macedonia',
+    'fr': 'France',
+    'gh': 'Ghana',
+    'ro': 'Romania',
+    'al': 'Albania',
+    'uy': 'Uruguay',
+    'ar': 'Argentina',
+    'sn': 'Senegal',
+    'cv': 'Cabo Verde',
+    'co': 'Colombia',
+    'pt': 'Portugal',
+    'mx': 'Mexico',
+    'gw': 'Guinea Bissau',
+    'br': 'Brasil',
+    'be': 'Belgica',
+    'ml': 'Mali',
+    'rs': 'Serbia',
+    'ma': 'Marruecos',
+    'ch': 'Suiza',
+    'hr': 'Croacia',
+    'do': 'Republica Dominicana',
+    'ge': 'Georgia',
+    'tr': 'Turquia',
+    'gp': 'Guadalupe',
+    'ua': 'Ucrania',
+    've': 'Venezuela',
+    'ss': 'Escocia',
+    'ru': 'Rusia',
+    'no': 'Noruega',
+    'jp': 'Japon',
+    'ng': 'Nigeria',
+    'nl': 'Holanda',
+    'gq': 'Guinea Ecuatorial',
+    'cd': 'Republica Democratica del Congo',
+    'sk': 'Eslovaquia',
+    'ca': 'Canada',
+    'xk': 'Kosovo',
+    'gb': 'Gran Bretaña',
+    'de': 'Alemania',
+    'us': 'Estados Unidos',
+    'pe': 'Peru',
+    'ci': 'Costa de Marfil',
+    'gr': 'Grecia',
+    'il': 'Israel',
+    'py': 'Paraguay',
+    'cl': 'Chile',
+    'tg': 'Togo',
+    'ie': 'Irlanda',
+    'hn': 'Honduras',
+    'hu': 'Hungria',
+    'dk': 'Dinamarca',
+    'pl': 'Polonia',
+    'cm': 'Camerun',
+    'at': 'Austria',
+    'dz': 'Argelia',
+    'it': 'Italia',
+    'se': 'Suecia',
+}
 jugadores_por_equipo = {}
 def extraer_jugadores(nombre_equipo):
     if nombre_equipo in jugadores_por_equipo:
@@ -38,8 +98,9 @@ def extraer_jugadores(nombre_equipo):
         dorsal = jugador.find('td', class_='num').text.strip()
         posicion = jugador.find_previous('th', class_='axis').text.strip() #this may be wrong
         nacionalidad = jugador.find('td', class_='ori').find('img')['src']
+        nacionalidad_nombre = country_codes.get(jugador.find('td', class_='ori').find('img')['alt'], 'Unknown')
         foto = jugador.find('td', class_='sdata_player_img').find('img')['src']
-        lista_jugadores.append([nombre, equipo, edad, dorsal, posicion, nacionalidad, foto])
+        lista_jugadores.append([nombre, equipo, edad, dorsal, posicion, nacionalidad_nombre, nacionalidad, foto])
     jugadores_por_equipo[nombre_equipo] = lista_jugadores
     return lista_jugadores
      
@@ -152,7 +213,7 @@ def populate():
         jugadores = jugadores_por_equipo[equipo_nombre]
         for jugador in jugadores:
             num_jugadores += 1
-            jugador = Jugador.objects.create(nombre=jugador[0], equipo=equipo, edad=jugador[2], dorsal=jugador[3], posicion=jugador[4], nacionalidad=jugador[5], foto=jugador[6])
+            jugador = Jugador.objects.create(nombre=jugador[0], equipo=equipo, edad=jugador[2], dorsal=jugador[3], posicion=jugador[4], nacionalidad_nombre=jugador[5],nacionalidad=jugador[6], foto=jugador[7])
 
     for jornada_data in lista_jornadas:
         num_jornadas += 1
