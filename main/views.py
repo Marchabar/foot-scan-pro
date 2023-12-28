@@ -38,7 +38,7 @@ def listado_jugadores(request):
 
             combined_query = Or([nombre_query, edad_query, posicion_query, nacionalidad_query, equipo_query])
 
-            jugadores = searcher.search(combined_query)
+            jugadores = searcher.search(combined_query, limit=None)
 
             jugador_objects = [Jugador.objects.get(pk=int(jugador['id_jugador'])) for jugador in jugadores]
     else:
