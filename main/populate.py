@@ -86,14 +86,13 @@ country_codes =  {
     'se': 'Suecia',
 }
 jugadores_por_equipo = {}
-def extraer_jugadores(nombre_equipo):
+def extraer_jugadores(url_plantilla, nombre_equipo):
     if nombre_equipo in jugadores_por_equipo:
         return jugadores_por_equipo[nombre_equipo]
 
     lista_jugadores = []
     nombre_equipo = unidecode(nombre_equipo.replace(' ', '-'))
-    url = 'https://www.resultados-futbol.com/plantilla/' + nombre_equipo
-    f = urllib.request.urlopen(url)
+    f = urllib.request.urlopen(url_plantilla)
     s = BeautifulSoup(f, 'lxml')
     jugadores = s.find_all('tr', itemprop='employee')
     for jugador in jugadores:
@@ -116,13 +115,21 @@ def extraer_equipos(partido):
         logo_local = partido.find('td', class_='equipo1').find('img')['src']
         url_local = partido.find('td', class_='equipo1').find_all('a')[1]['href']
         equipos_extracted[nombre_local] = [nombre_local, logo_local, url_local]
-        extraer_jugadores(nombre_local)
+        url_plantilla = "https://www.resultados-futbol.com" + url_local
+        f = urllib.request.urlopen(url_plantilla)
+        s = BeautifulSoup(f, 'lxml')
+        url_plantilla = s.find('b', text='Plantilla').parent['href']
+        extraer_jugadores(url_plantilla, nombre_local)
         
     if nombre_visitante not in equipos_extracted:
         logo_visitante = partido.find('td', class_='equipo2').find('img')['src']
         url_visitante = partido.find('td', class_='equipo2').find_all('a')[1]['href']
         equipos_extracted[nombre_visitante] = [nombre_visitante, logo_visitante, url_visitante]
-        extraer_jugadores(nombre_visitante)
+        url_plantilla = "https://www.resultados-futbol.com" + url_visitante
+        f = urllib.request.urlopen(url_plantilla)
+        s = BeautifulSoup(f, 'lxml')
+        url_plantilla = s.find('b', text='Plantilla').parent['href']
+        extraer_jugadores(url_plantilla, nombre_visitante)
     return equipos_extracted
 
 def extraer_partidos(url_jornada):
@@ -227,11 +234,7 @@ def populate():
             equipo_local, created = Equipo.objects.get_or_create(nombre=partido_data[0])
             equipo_visitante, created = Equipo.objects.get_or_create(nombre=partido_data[1])
             partido = Partido.objects.create(equipo_local=equipo_local, equipo_visitante=equipo_visitante, goles_local=partido_data[2], goles_visitante=partido_data[3], fecha=partido_data[4], jornada=jornada)
-          
         
-    
-    
-
     return ((num_jugadores, num_equipos, num_partidos, num_jornadas))
 
 def populate_whoosh():
