@@ -3,6 +3,14 @@
 
 {% block content %}
 <div class="container">
+    <form method="get" action="{% url 'listado-jugadores' %}">
+        <div class="form-group">
+            <label for="search">Search Players:</label>
+            <input type="text" class="form-control" id="search" name="query" placeholder="Enter player name">
+        </div>
+        <button type="submit" class="btn btn-primary">Search</button>
+    </form>
+
     <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 justify-content-center">
         {% for jugador in jugadores %}
         <div class="col mb-2 mt-2">
