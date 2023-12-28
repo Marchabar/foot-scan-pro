@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from main.models import Equipo, Jornada, Partido
+from main.models import Equipo, Jornada, Partido, Jugador
 
 
 def index(request):
@@ -17,3 +17,7 @@ def listado_partidos_jornada(request, id_jornada):
     jornada = Jornada.objects.get(id_jornada=id_jornada)
     partidos = Partido.objects.filter(jornada=jornada)
     return render(request, 'listado-partidos-jornadas.html', {'jornada':jornada,'partidos': partidos})
+
+def listado_jugadores(request):
+    jugadores = Jugador.objects.all()
+    return render(request, 'listado-jugadores.html', {'jugadores': jugadores})

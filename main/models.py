@@ -21,7 +21,6 @@ class Jugador (models.Model):
     dorsal = models.TextField(blank=True)
     posicion = models.CharField(max_length=15, choices=[('Portero', 'Portero'), ('Defensa', 'Defensa'), ('Centrocampista', 'Centrocampista'), ('Delantero', 'Delantero')])
     nacionalidad_nombre = models.TextField(blank=True)
-    nacionalidad = models.URLField(null=True, blank=True)
     foto = models.URLField(null=True, blank=True)
 
     def __str__(self):

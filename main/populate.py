@@ -4,6 +4,11 @@ import datetime
 from unidecode import unidecode
 from main.models import Jugador, Equipo, Partido, Jornada
 from django.shortcuts import render, redirect
+import os
+import shutil
+from whoosh.fields import Schema, TEXT, ID
+from whoosh.index import create_in
+
 
 
 
@@ -97,10 +102,9 @@ def extraer_jugadores(nombre_equipo):
         edad = jugador.find('td', class_='birthdate').text.strip()
         dorsal = jugador.find('td', class_='num').text.strip()
         posicion = jugador.find_previous('th', class_='axis').text.strip() #this may be wrong
-        nacionalidad = jugador.find('td', class_='ori').find('img')['src']
         nacionalidad_nombre = country_codes.get(jugador.find('td', class_='ori').find('img')['alt'], 'Unknown')
         foto = jugador.find('td', class_='sdata_player_img').find('img')['src']
-        lista_jugadores.append([nombre, equipo, edad, dorsal, posicion, nacionalidad_nombre, nacionalidad, foto])
+        lista_jugadores.append([nombre, equipo, edad, dorsal, posicion, nacionalidad_nombre, foto])
     jugadores_por_equipo[nombre_equipo] = lista_jugadores
     return lista_jugadores
      
@@ -213,7 +217,7 @@ def populate():
         jugadores = jugadores_por_equipo[equipo_nombre]
         for jugador in jugadores:
             num_jugadores += 1
-            jugador = Jugador.objects.create(nombre=jugador[0], equipo=equipo, edad=jugador[2], dorsal=jugador[3], posicion=jugador[4], nacionalidad_nombre=jugador[5],nacionalidad=jugador[6], foto=jugador[7])
+            jugador = Jugador.objects.create(nombre=jugador[0], equipo=equipo, edad=jugador[2], dorsal=jugador[3], posicion=jugador[4], nacionalidad_nombre=jugador[5], foto=jugador[6])
 
     for jornada_data in lista_jornadas:
         num_jornadas += 1
@@ -230,12 +234,28 @@ def populate():
 
     return ((num_jugadores, num_equipos, num_partidos, num_jornadas))
 
+def populate_whoosh():
+    schema_jugadores = Schema(id_jugador=ID(stored=True), nombre=TEXT(stored=True), equipo=TEXT(stored=True), edad=TEXT(stored=True), dorsal=TEXT(stored=True), posicion=TEXT(stored=True), nacionalidad_nombre=TEXT(stored=True))
+
+    if os.path.exists("Index"):
+        shutil.rmtree("Index")
+    os.mkdir("Index")
+
+    ix_jugadores = create_in("Index", schema_jugadores)
+    writer_jugadores = ix_jugadores.writer()
+    lista_jugadores = Jugador.objects.all()
+    for jugador in lista_jugadores:
+        writer_jugadores.update_document(id_jugador=str(jugador.id_jugador), nombre=jugador.nombre, equipo=jugador.equipo.nombre, edad=str(jugador.edad), dorsal=jugador.dorsal, posicion=jugador.posicion, nacionalidad_nombre=jugador.nacionalidad_nombre)
+    writer_jugadores.commit()
+    return len(lista_jugadores)
     
 def cargar(request):
     if request.method == 'POST':
         num_jugadores, num_equipos, num_partidos, num_jornadas = populate()
-        return render(request, 'cargar.html', {'num_jugadores': num_jugadores, 'num_equipos': num_equipos, 'num_partidos': num_partidos, 'num_jornadas': num_jornadas})
+        num_jugadores_whoosh = populate_whoosh()
+        return render(request, 'cargar.html', {'num_jugadores': num_jugadores, 'num_equipos': num_equipos, 'num_partidos': num_partidos, 'num_jornadas': num_jornadas, 'num_jugadores_whoosh': num_jugadores_whoosh})
     
     return render(request, 'confirmacion-cargar.html')
+
 
 

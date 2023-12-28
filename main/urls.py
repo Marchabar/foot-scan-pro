@@ -10,5 +10,6 @@ urlpatterns = [
     path('listado-equipos/', views.listado_equipos, name='listado-equipos'),
     path('listado-jornadas/', views.listado_jornadas, name='listado-jornadas'),
     path('listado-jornadas/partidos/<int:id_jornada>/', views.listado_partidos_jornada, name='listado-partidos-jornada'),
+    path('listado-jugadores/', views.listado_jugadores, name='listado-jugadores'),
     
 ]

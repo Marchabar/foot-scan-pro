@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+{% block title %}Jugadores{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 justify-content-center">
+        {% for jugador in jugadores %}
+        <div class="col mb-2 mt-2">
+            <div class="card shadow-sm" style="width: 400px;"> 
+                <div class="card-header">
+                    <div class="row">
+                        <div class="col text-left">
+                            {{ jugador.posicion }}
+                        </div>
+                        <div class="col text-end">
+                            {{ jugador.edad }} años
+                        </div>
+                    </div>
+                </div>
+                <img src="{{ jugador.foto }}" class="card-img-top mt-3" alt="{{ jugador.nombre }}" style="max-height: 100px; object-fit: contain;">
+                <div class="card-body text-center">
+                    <h5 class="card-title">{{ jugador.nombre }}</h5>
+                    <div class="card-text">
+                        <p class="player-info">
+                            {{ jugador.nacionalidad_nombre }}<br>
+                            {{ jugador.equipo }}
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}
