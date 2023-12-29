@@ -24,6 +24,7 @@ def listado_partidos_jornada(request, id_jornada):
 
 def listado_jugadores(request):
     query = request.GET.get('query', '')
+    order = request.GET.get('order', 'nombre')
 
     if query:
         directorio = 'Index'  
@@ -41,7 +42,11 @@ def listado_jugadores(request):
             jugadores = searcher.search(combined_query, limit=None)
 
             jugador_objects = [Jugador.objects.get(pk=int(jugador['id_jugador'])) for jugador in jugadores]
+            jugador_objects = Jugador.objects.filter(pk__in=[jugador.pk for jugador in jugador_objects])
+
     else:
         jugador_objects = Jugador.objects.all()
+    
+    jugador_objects = jugador_objects.order_by(order)
 
-    return render(request, 'listado-jugadores.html', {'jugadores': jugador_objects, 'query': query})
+    return render(request, 'listado-jugadores.html', {'jugadores': jugador_objects, 'query': query, 'order': order})
