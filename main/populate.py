@@ -230,10 +230,20 @@ def populate():
         num_jornadas += 1
         jornada = Jornada.objects.create(numero=jornada_data[0], fecha_inicio=jornada_data[2], fecha_fin=jornada_data[3])
         for partido_data in jornada_data[1]:
-            num_partidos += 1
             equipo_local, created = Equipo.objects.get_or_create(nombre=partido_data[0])
             equipo_visitante, created = Equipo.objects.get_or_create(nombre=partido_data[1])
-            partido = Partido.objects.create(equipo_local=equipo_local, equipo_visitante=equipo_visitante, goles_local=partido_data[2], goles_visitante=partido_data[3], fecha=partido_data[4], jornada=jornada)
+            partido, created = Partido.objects.get_or_create(
+            equipo_local=equipo_local, 
+            equipo_visitante=equipo_visitante, 
+            jornada=jornada,
+            defaults={
+                'goles_local': partido_data[2], 
+                'goles_visitante': partido_data[3], 
+                'fecha': partido_data[4]
+            }
+            )
+            if created:
+                    num_partidos += 1
         
     return ((num_jugadores, num_equipos, num_partidos, num_jornadas))
 
