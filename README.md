@@ -1,6 +1,9 @@
 # foot-scan-pro
 This project lets you tap into the world of La Liga Santander, providing a user-friendly interface to explore Jornadas (matchdays), Partidos (matches), Equipos (teams), and Jugadores (players).
 
+<img width="1080" alt="image" src="https://github.com/Marchabar/foot-scan-pro/assets/100620336/bf7bd002-27e6-4bc4-877c-dbd3870c5722">
+
+
 ## Key Features
 Jornadas Overview: Get a quick look at each matchday, including scheduled matches and results.
 
