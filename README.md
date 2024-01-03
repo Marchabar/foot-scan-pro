@@ -12,10 +12,15 @@ Partidos Insight: Dive into match details.
 Equipos Showcase: Check out profiles of La Liga teams.
 
 Jugadores Spotlight: Explore player profiles, including nationality, position, and more.
+## Prerequisites
 
+- Python 3.10
+- Django
+- Virtual environment (optional but recommended)
+ 
 ## Installation
 
-First of all, you need to clone this repository to your local machine. It is recommended to have Python 3.10 or a later version for the correct functioning of the system. Once this is done, you can continue with:
+First of all, you need to clone this repository to your local machine. Once this is done, you can continue with:
 
 ```bash
 pip install -r requirements.txt
